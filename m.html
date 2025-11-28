@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Project Workflow Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+
+    <style>
+        /* Basic Dark Theme and Centering */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; 
+            color: #c9d1d9;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            color: #3B82F6;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .mermaid-container {
+            width: 100%;
+            max-width: 1400px;
+            overflow-x: auto;
+            background: #161b22;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Essential Mermaid Configuration */
+        .mermaid-container > pre {
+            /* Ensures the complex graph renders properly by allowing overflow */
+            overflow: visible !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        End-to-End Workflow: AI-Driven Pilgrim Management System
+    </div>
+    
+    <div class="mermaid-container">
+        <pre class="mermaid">
+graph TD
+    %% Define Visual Styles
+    classDef DataLayer fill:#BFEA7C, stroke:#3CB371, stroke-width:2px, color:#161b22;
+    classDef LogicLayer fill:#6C9CFF, stroke:#0077B6, stroke-width:2px, color:#161b22;
+    classDef Actor fill:#F0F8FF, stroke:#3B82F6, stroke-width:2px, color:#161b22;
+    classDef Decision fill:#FFEB8A, stroke:#FFA500, stroke-width:2px, color:#161b22;
+    classDef Alert fill:#FF6347, stroke:#DC143C, stroke-width:2px, color:#161b22;
+    classDef Action fill:#E0FFFF, stroke:#00CED1, stroke-width:2px, color:#161b22;
+    classDef Output fill:#FAFAD2, stroke:#FFA500, stroke-width:2px, color:#161b22;
+
+    %% A: Data Ingestion (IoT & Historical - Requirement 1, 3)
+    subgraph A_Data [Data & Ingestion (The Foundation)]
+        D1[Historical Data: Festivals, Weather, Footfall]:::DataLayer --> D3{AI Data Lake / Fusion Platform}:::LogicLayer
+        D2[Simulated Real-Time Sensor / Video Stream]:::DataLayer --> E(Edge AI: Density & Flow Rate);
+        E --> D3;
+    end
+
+    %% B: Core AI Prediction & Logic (Requirement 1, 4)
+    subgraph B_Logic [Logic & Prediction (The AI Core)]
+        D3 --> L1[ML Model Training (LSTM & Regression)]:::LogicLayer
+        L1 --> L2{Predictive Analysis Engine}:::LogicLayer
+        L2 -- Forecast (7 Day Strategy) --> L3[Dynamic Capacity & Surge Prediction]:::LogicLayer
+        L2 -- Real-time Risk Data --> L4[Behavioral Anomaly Detector (Panic/Fall)];
+    end
+
+    %% C: Pilgrim Journey & Smart Queue (Requirement 2, 6, 7)
+    subgraph C_User [User Journey & Ticketing (The Pilgrim Flow)]
+        P1[Pilgrim Access (App/Kiosk/Web)]:::Actor --> P2[Request Digital Darshan Slot];
+        P2 --> P3(AI-Driven Slot Allocation Logic);
+        P3 --> P4[Issue Unique Digital Pass (QR Code)];
+        P4 --> P5[Pilgrim Joins Virtual Queue];
+        P5 --> P6[Real-time Status Tracking (App/Signage)];
+    end
+
+    %% D: Response & Execution (Requirement 4, 5)
+    subgraph D_Response [Response & Control (The Safety Loop)]
+        L4 -- Anomaly Detected --> R1[TRIGGER: P-LEVEL (Predictive) Alert]:::Alert
+        L3 -- High Forecast --> R1
+        P6 --> R2{Time Slot Reached?};
+        R2 -- Yes --> R3[Send Notification: 'Proceed to Gate X'];
+        R3 --> R4[Smart Gate Verification (QR Scan)];
+        R4 --> R5{Validation Success / Safe Flow?};
+        R5 -- Fail / Overload --> R6[TRIGGER: R-LEVEL (Real-time) Alert]:::Alert
+    end
+
+    %% E: Management & Output (Final Results & Optimization)
+    subgraph E_Mgmt [Management & Output (Admin Control)]
+        R1 --> M1[Admin Dashboard / Command Center];
+        R6 --> M1;
+        L2 -- Forecast Data --> M1;
+        M1 --> M2[Suggest Staff Deployment (Traffic & Security)];
+        R1 --> M3[Activate Dynamic Signage (Redirection)];
+        R6 --> M3;
+        M1 --> M4[Automated Emergency Response (Medics / Police)];
+        
+        R5 -- Success --> M5[Pilgrim Enters Temple];
+        M5 --> M6[Final Data Capture & Post-Mortem Analysis];
+    end
+
+
+    %% GLOBAL CONNECTIONS (Flow of Data and Control)
+    
+    %% Data Flow to Logic
+    E --> L2
+    D3 --> L2
+
+    %% Logic Outputs
+    L3 -- Capacity Data --> P3
+    L4 -- Anomaly Alert --> R1
+    
+    %% User to System Flow
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+    P4 --> P5
+    P5 --> P6
+    P6 --> R2
+
+    %% Response Flow
+    R2 -- Yes --> R3
+    R3 --> R4
+    R4 --> R5
+    R5 -- Success --> M5
+    R5 -- Fail / Overload --> R6
+    
+    %% Alert to Management
+    R1 --> M1
+    R6 --> M1
+    R1 --> M3
+    R6 --> M3
+    R6 --> M4
+    R6 --> M5
+    M1 -- Traffic Data --> M2
+    M5 --> M6
+
+    
+    %% Styling based on functional groups
+    class D1, D2, D3 DataLayer;
+    class L1, L2, L3, L4 LogicLayer;
+    class P1, R3, R4 Action;
+
+        </pre>
+    </div>
+
+    <script>
+        // JavaScript for initializing Mermaid after the DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof mermaid !== 'undefined') {
+                mermaid.initialize({ startOnLoad: true });
+            }
+        });
+    </script>
+</body>
+</html>
